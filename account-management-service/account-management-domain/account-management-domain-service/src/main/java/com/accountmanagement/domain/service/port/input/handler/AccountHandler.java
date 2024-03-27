@@ -49,7 +49,7 @@ public class AccountHandler {
         );
 
     }
-    @Transactional
+
     public CreateAccountBalanceResponse getAccountBalance(CreateAccountBalanceCommand createAccountBalanceCommand) {
         Optional<Account> account = accountRepository.findByAccountId(createAccountBalanceCommand.accountId());
         if (account.isEmpty()) {
@@ -70,13 +70,14 @@ public class AccountHandler {
         return accountDataMapper.createTransactionQueryResponse(transactionList, transactionQuery.limit());
     }
 
-    public CreateAccountBalanceResponse doAccountMovement(CreateAccountMovementCommand createAccountMovementCommand) {
+    @Transactional
+    public synchronized CreateAccountBalanceResponse doAccountMovement(CreateAccountMovementCommand createAccountMovementCommand) {
         Optional<Account> account = accountRepository.findByAccountId(createAccountMovementCommand.accountId());
         if (account.isEmpty()) {
             log.warn("Could not find Account with accountId: {}", createAccountMovementCommand.accountId().toString());
             throw new AccountDomainException("Could not find Account with accountId: " + createAccountMovementCommand.accountId());
         }
-        AccountMovementType accountMovementType  = AccountMovementType.isValidAccountMovementType(createAccountMovementCommand.movementType());
+        AccountMovementType accountMovementType = AccountMovementType.isValidAccountMovementType(createAccountMovementCommand.movementType());
 
         return switch (accountMovementType) {
             case DEPOSIT -> {
