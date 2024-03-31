@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface TransactionEntityRepository extends JpaRepository<TransactionEntity, UUID> {
+public interface TransactionJPARepository extends JpaRepository<TransactionEntity, UUID> {
 
     @Query("SELECT t FROM TransactionEntity t ORDER BY t.transactionTime DESC")
     List<TransactionEntity> findLastNTransactions(Pageable pageable);

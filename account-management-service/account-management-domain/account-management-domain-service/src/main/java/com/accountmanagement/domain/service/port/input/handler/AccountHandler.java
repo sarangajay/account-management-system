@@ -8,8 +8,9 @@ import com.accountmanagement.domain.core.event.AccountMovementEvent;
 import com.accountmanagement.domain.core.exception.AccountDomainException;
 import com.accountmanagement.domain.core.exception.AccountNotFoundException;
 import com.accountmanagement.domain.core.exception.CustomerNotFoundException;
-import com.accountmanagement.domain.core.valueobject.AccountMovementType;
 import com.accountmanagement.domain.core.valueobject.Money;
+import com.accountmanagement.domain.core.valueobject.TransactionId;
+import com.accountmanagement.domain.core.valueobject.TransactionType;
 import com.accountmanagement.domain.service.create.*;
 import com.accountmanagement.domain.service.mapper.AccountDataMapper;
 import com.accountmanagement.domain.service.port.output.repository.AccountRepository;
@@ -20,8 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -45,10 +48,17 @@ public class AccountHandler {
             log.warn("Could not find Customer with customerId: {}", createAccountCommand.customerId().toString());
             throw new CustomerNotFoundException("Could not find Customer with customerId: " + createAccountCommand.customerId());
         }
-
-        return accountDataMapper.createAccountResponseFromAccount(
-                accountRepository.save(accountDataMapper.createAccountCommandToAccount(createAccountCommand, customer.get()))
-        );
+        Account account = accountRepository.save(accountDataMapper.createAccountCommandToAccount(createAccountCommand, customer.get()));
+        Transaction transaction = Transaction
+                .builder()
+                .transactionId(new TransactionId(UUID.randomUUID()))
+                .money(account.getBalance())
+                .account(account)
+                .transactionType(TransactionType.DEBIT)
+                .transactionTime(LocalDateTime.now())
+                .build();
+        transactionRepository.save(transaction);
+        return accountDataMapper.createAccountResponseFromAccount(account);
     }
 
     public CreateAccountBalanceResponse getAccountBalance(CreateAccountBalanceCommand createAccountBalanceCommand) {
@@ -79,16 +89,18 @@ public class AccountHandler {
             log.warn("Could not find Account with accountId: {}", createAccountMovementCommand.accountId().toString());
             throw new AccountNotFoundException("Could not find Account with accountId: " + createAccountMovementCommand.accountId());
         }
-        AccountMovementType accountMovementType = AccountMovementType.isValidAccountMovementType(createAccountMovementCommand.movementType());
+        TransactionType accountMovementType = TransactionType.isValidTransactionType(createAccountMovementCommand.movementType());
 
         return switch (accountMovementType) {
-            case DEPOSIT -> {
+            case DEBIT -> {
                 AccountMovementEvent movementEvent = accountManagementService.deposit(account.get(), Money.createWithScale(createAccountMovementCommand.amount()));
+                accountRepository.save(movementEvent.account());
                 transactionRepository.save(accountDataMapper.createTransaction(createAccountMovementCommand, movementEvent));
                 yield accountDataMapper.createCreateAccountBalanceResponse(movementEvent);
             }
-            case WITHDRAW -> {
+            case CREDIT -> {
                 AccountMovementEvent movementEvent = accountManagementService.withdraw(account.get(), Money.createWithScale(createAccountMovementCommand.amount()));
+                accountRepository.save(movementEvent.account());
                 transactionRepository.save(accountDataMapper.createTransaction(createAccountMovementCommand, movementEvent));
                 yield accountDataMapper.createCreateAccountBalanceResponse(movementEvent);
             }

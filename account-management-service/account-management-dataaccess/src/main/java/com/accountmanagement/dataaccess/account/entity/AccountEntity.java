@@ -16,7 +16,6 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@IdClass(AccountEntityId.class)
 @Table(name = "accounts")
 @Entity
 public class AccountEntity {
@@ -25,13 +24,11 @@ public class AccountEntity {
     private UUID id;
 
     @Enumerated(EnumType.STRING)
-    @Id
     private AccountType accountType;
 
     private BigDecimal balance;
 
-    @Id
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "CUSTOMER_ID")
     private CustomerEntity customer;
 

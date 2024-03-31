@@ -1,6 +1,7 @@
 package com.accountmanagement.application.exception.handler;
 
 import com.accountmanagement.domain.core.exception.AccountDomainException;
+import com.accountmanagement.domain.core.exception.AccountNotFoundException;
 import com.accountmanagement.domain.core.exception.CustomerNotFoundException;
 import com.accountmanagement.domain.core.exception.DomainException;
 import jakarta.validation.ConstraintViolation;
@@ -32,9 +33,21 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(value = {CustomerNotFoundException.class, AccountDomainException.class})
+    @ExceptionHandler(value = {AccountNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorDTO handleException(DomainException accountDomainException) {
+    public ErrorDTO handleException(AccountNotFoundException accountDomainException) {
+        log.error(accountDomainException.getMessage(), accountDomainException);
+        return ErrorDTO
+                .builder()
+                .code(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .message(accountDomainException.getMessage())
+                .build();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = {CustomerNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorDTO handleException(CustomerNotFoundException accountDomainException) {
         log.error(accountDomainException.getMessage(), accountDomainException);
         return ErrorDTO
                 .builder()

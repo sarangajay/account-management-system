@@ -21,6 +21,7 @@ public class TransactionDataAccessMapper {
     public TransactionEntity transactionToTransactionEntity(Transaction transaction, AccountEntity accountEntity) {
         return TransactionEntity
                 .builder()
+                .id(transaction.getTransactionId().getValue())
                 .transactionType(transaction.getTransactionType())
                 .transactionTime(LocalDateTime.now())
                 .amount(transaction.getMoney().amount())

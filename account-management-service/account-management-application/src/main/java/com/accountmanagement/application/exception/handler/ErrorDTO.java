@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Builder
 @Slf4j
-@AllArgsConstructor
 public record ErrorDTO(String code, String message) {
 
 }

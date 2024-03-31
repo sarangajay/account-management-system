@@ -3,7 +3,7 @@ package com.accountmanagement.dataaccess.transaction.adapter;
 import com.accountmanagement.dataaccess.account.entity.AccountEntity;
 import com.accountmanagement.dataaccess.account.repository.AccountJPARepository;
 import com.accountmanagement.dataaccess.transaction.mapper.TransactionDataAccessMapper;
-import com.accountmanagement.dataaccess.transaction.repository.TransactionEntityRepository;
+import com.accountmanagement.dataaccess.transaction.repository.TransactionJPARepository;
 import com.accountmanagement.domain.core.entity.Transaction;
 import com.accountmanagement.domain.core.exception.AccountDomainException;
 import com.accountmanagement.domain.service.port.output.repository.TransactionRepository;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Component
 public class TransactionRepositoryImpl implements TransactionRepository {
 
-    private final TransactionEntityRepository transactionEntityRepository;
+    private final TransactionJPARepository transactionEntityRepository;
     private final AccountJPARepository accountJPARepository;
     private final TransactionDataAccessMapper transactionDataAccessMapper;
 
