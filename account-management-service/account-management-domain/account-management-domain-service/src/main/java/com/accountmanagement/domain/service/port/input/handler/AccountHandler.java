@@ -6,6 +6,8 @@ import com.accountmanagement.domain.core.entity.Customer;
 import com.accountmanagement.domain.core.entity.Transaction;
 import com.accountmanagement.domain.core.event.AccountMovementEvent;
 import com.accountmanagement.domain.core.exception.AccountDomainException;
+import com.accountmanagement.domain.core.exception.AccountNotFoundException;
+import com.accountmanagement.domain.core.exception.CustomerNotFoundException;
 import com.accountmanagement.domain.core.valueobject.AccountMovementType;
 import com.accountmanagement.domain.core.valueobject.Money;
 import com.accountmanagement.domain.service.create.*;
@@ -41,7 +43,7 @@ public class AccountHandler {
         Optional<Customer> customer = customerRepository.findByCustomerId(createAccountCommand.customerId());
         if (customer.isEmpty()) {
             log.warn("Could not find Customer with customerId: {}", createAccountCommand.customerId().toString());
-            throw new AccountDomainException("Could not find Customer with customerId: " + createAccountCommand.customerId());
+            throw new CustomerNotFoundException("Could not find Customer with customerId: " + createAccountCommand.customerId());
         }
 
         return accountDataMapper.createAccountResponseFromAccount(
@@ -53,7 +55,7 @@ public class AccountHandler {
         Optional<Account> account = accountRepository.findByAccountId(createAccountBalanceCommand.accountId());
         if (account.isEmpty()) {
             log.warn("Could not find Account with accountId: {}", createAccountBalanceCommand.accountId().toString());
-            throw new AccountDomainException("Could not find Account with accountId: " + createAccountBalanceCommand.accountId());
+            throw new AccountNotFoundException("Could not find Account with accountId: " + createAccountBalanceCommand.accountId());
         }
         return accountDataMapper.createAccountBalanceResponseFromAccount(account.get());
     }
@@ -75,7 +77,7 @@ public class AccountHandler {
         Optional<Account> account = accountRepository.findByAccountId(createAccountMovementCommand.accountId());
         if (account.isEmpty()) {
             log.warn("Could not find Account with accountId: {}", createAccountMovementCommand.accountId().toString());
-            throw new AccountDomainException("Could not find Account with accountId: " + createAccountMovementCommand.accountId());
+            throw new AccountNotFoundException("Could not find Account with accountId: " + createAccountMovementCommand.accountId());
         }
         AccountMovementType accountMovementType = AccountMovementType.isValidAccountMovementType(createAccountMovementCommand.movementType());
 

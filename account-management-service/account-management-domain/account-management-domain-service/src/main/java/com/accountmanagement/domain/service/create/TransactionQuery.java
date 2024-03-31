@@ -5,5 +5,5 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record TransactionQuery(@NotNull UUID accountId,
-                               int limit) {
+                               @NotNull int limit) {
 }

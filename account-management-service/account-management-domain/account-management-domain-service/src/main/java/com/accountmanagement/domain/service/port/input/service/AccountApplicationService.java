@@ -8,5 +8,5 @@ public interface AccountApplicationService {
     CreateAccountResponse createAccount(@Valid CreateAccountCommand createAccountCommand);
     CreateAccountBalanceResponse getAccountBalance(@Valid CreateAccountBalanceCommand createAccountBalanceCommand);
     TransactionQueryResponse queryTransaction(@Valid TransactionQuery transactionQuery);
-    CreateAccountBalanceResponse doAccountMovement(CreateAccountMovementCommand createAccountMovementCommand);
+    CreateAccountBalanceResponse doAccountMovement(@Valid CreateAccountMovementCommand createAccountMovementCommand);
 }

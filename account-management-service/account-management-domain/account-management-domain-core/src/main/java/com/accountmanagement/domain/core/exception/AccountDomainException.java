@@ -1,6 +1,6 @@
 package com.accountmanagement.domain.core.exception;
 
-public class AccountDomainException extends DomainException{
+public class AccountDomainException extends DomainException {
     public AccountDomainException(String message) {
         super(message);
     }
