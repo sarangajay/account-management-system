@@ -10,5 +10,4 @@ import java.util.UUID;
 public interface AccountRepository {
     Account save(Account account);
     Optional<Account> findByAccountId(UUID accountId);
-    List<Transaction> findTransactionsByAccountId(UUID accountId);
 }

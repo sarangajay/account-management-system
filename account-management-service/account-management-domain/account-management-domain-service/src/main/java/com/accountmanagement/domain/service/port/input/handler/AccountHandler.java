@@ -47,7 +47,6 @@ public class AccountHandler {
         return accountDataMapper.createAccountResponseFromAccount(
                 accountRepository.save(accountDataMapper.createAccountCommandToAccount(createAccountCommand, customer.get()))
         );
-
     }
 
     public CreateAccountBalanceResponse getAccountBalance(CreateAccountBalanceCommand createAccountBalanceCommand) {
@@ -66,7 +65,8 @@ public class AccountHandler {
             throw new AccountDomainException("Could not find Account with accountId: " + transactionQuery.accountId());
         }
 
-        List<Transaction> transactionList = accountRepository.findTransactionsByAccountId(account.get().getAccountId().getValue());
+        List<Transaction> transactionList = transactionRepository.findTransactionsByAccountId(account.get().getAccountId().getValue(),
+                transactionQuery.limit());
         return accountDataMapper.createTransactionQueryResponse(transactionList, transactionQuery.limit());
     }
 
