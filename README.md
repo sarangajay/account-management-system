@@ -13,10 +13,10 @@
    target/dependency-graph.png
 
 -  Clean and Hexagonal Architecture
-  account-management-domain - DDD 
-  account-management-dataaccess - output adapter 
-  account-management-application - input  adapter 
-  account-management-container - Spring container 
+  - account-management-domain - DDD 
+  - account-management-dataaccess - output adapter 
+  - account-management-application - input  adapter 
+  - account-management-container - Spring container 
 
 - H2 console
   http://localhost:8080/h2-console/
